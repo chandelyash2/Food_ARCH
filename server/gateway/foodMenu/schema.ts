@@ -8,7 +8,7 @@ import { FoodMenuType } from './types/FoodMenu'
 
 export const foodQuery = {
   foodMenu: {
-    type: new GraphQLNonNull( FoodMenuType),
+    type: new GraphQLNonNull(FoodMenuType),
     resolve: getFoodMenuResolver,
   },
 }
