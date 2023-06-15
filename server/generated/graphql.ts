@@ -66,6 +66,7 @@ export type Muttaion = {
   addFoodItem?: Maybe<FoodItemPayload>
   createRoom?: Maybe<RoomPayload>
   placeOrder?: Maybe<OrderPlacedType>
+  signUp?: Maybe<SignupPayloadType>
 }
 
 export type MuttaionAddFoodCategoryArgs = {
@@ -83,6 +84,10 @@ export type MuttaionCreateRoomArgs = {
 
 export type MuttaionPlaceOrderArgs = {
   input?: InputMaybe<Array<InputMaybe<OrderPlacedInputType>>>
+}
+
+export type MuttaionSignUpArgs = {
+  input?: InputMaybe<SignupInputType>
 }
 
 export type OrderPlacedInputType = {
@@ -116,6 +121,33 @@ export type RoomType = {
   __typename?: 'RoomType'
   id: Scalars['ID']
   name: Scalars['String']
+}
+
+export type SignupInputType = {
+  email?: InputMaybe<Scalars['String']>
+  mobile?: InputMaybe<Scalars['String']>
+  role: UserRoleEnum
+}
+
+export type SignupPayloadType = {
+  __typename?: 'SignupPayloadType'
+  error?: Maybe<ErrorType>
+  success?: Maybe<Scalars['String']>
+  user?: Maybe<UserType>
+}
+
+export enum UserRoleEnum {
+  Admin = 'ADMIN',
+  User = 'USER',
+}
+
+export type UserType = {
+  __typename?: 'UserType'
+  email?: Maybe<Scalars['String']>
+  firstName?: Maybe<Scalars['String']>
+  lastName?: Maybe<Scalars['String']>
+  mobile?: Maybe<Scalars['String']>
+  role?: Maybe<UserRoleEnum>
 }
 
 export type AdditionalEntityFields = {
@@ -246,6 +278,10 @@ export type ResolversTypes = {
   RoomInputType: RoomInputType
   RoomPayload: ResolverTypeWrapper<RoomPayload>
   RoomType: ResolverTypeWrapper<RoomType>
+  SignupInputType: SignupInputType
+  SignupPayloadType: ResolverTypeWrapper<SignupPayloadType>
+  UserRoleEnum: UserRoleEnum
+  UserType: ResolverTypeWrapper<UserType>
   AdditionalEntityFields: AdditionalEntityFields
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
 }
@@ -268,6 +304,9 @@ export type ResolversParentTypes = {
   RoomInputType: RoomInputType
   RoomPayload: RoomPayload
   RoomType: RoomType
+  SignupInputType: SignupInputType
+  SignupPayloadType: SignupPayloadType
+  UserType: UserType
   AdditionalEntityFields: AdditionalEntityFields
   Boolean: Scalars['Boolean']
 }
@@ -457,6 +496,12 @@ export type MuttaionResolvers<
     ContextType,
     Partial<MuttaionPlaceOrderArgs>
   >
+  signUp?: Resolver<
+    Maybe<ResolversTypes['SignupPayloadType']>,
+    ParentType,
+    ContextType,
+    Partial<MuttaionSignUpArgs>
+  >
 }
 
 export type OrderPlacedTypeResolvers<
@@ -502,6 +547,32 @@ export type RoomTypeResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }
 
+export type SignupPayloadTypeResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['SignupPayloadType'] = ResolversParentTypes['SignupPayloadType'],
+> = {
+  error?: Resolver<Maybe<ResolversTypes['ErrorType']>, ParentType, ContextType>
+  success?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  user?: Resolver<Maybe<ResolversTypes['UserType']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type UserTypeResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['UserType'] = ResolversParentTypes['UserType'],
+> = {
+  email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  firstName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  lastName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  mobile?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  role?: Resolver<
+    Maybe<ResolversTypes['UserRoleEnum']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
 export type Resolvers<ContextType = any> = {
   ErrorType?: ErrorTypeResolvers<ContextType>
   FoodCategoryPayload?: FoodCategoryPayloadResolvers<ContextType>
@@ -514,6 +585,8 @@ export type Resolvers<ContextType = any> = {
   Query?: QueryResolvers<ContextType>
   RoomPayload?: RoomPayloadResolvers<ContextType>
   RoomType?: RoomTypeResolvers<ContextType>
+  SignupPayloadType?: SignupPayloadTypeResolvers<ContextType>
+  UserType?: UserTypeResolvers<ContextType>
 }
 
 export type DirectiveResolvers<ContextType = any> = {
