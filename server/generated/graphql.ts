@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { GraphQLResolveInfo } from 'graphql'
+import {
+  GraphQLResolveInfo,
+  GraphQLScalarType,
+  GraphQLScalarTypeConfig,
+} from 'graphql'
 import gql from 'graphql-tag'
 export type Maybe<T> = T | null
 export type InputMaybe<T> = Maybe<T>
@@ -22,6 +26,8 @@ export type Scalars = {
   Boolean: boolean
   Int: number
   Float: number
+  /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
+  DateTime: any
 }
 
 export type ErrorType = {
@@ -67,6 +73,7 @@ export type Muttaion = {
   createRoom?: Maybe<RoomPayload>
   placeOrder?: Maybe<OrderPlacedType>
   signUp?: Maybe<SignupPayloadType>
+  verifyUser?: Maybe<SignupPayloadType>
 }
 
 export type MuttaionAddFoodCategoryArgs = {
@@ -88,6 +95,18 @@ export type MuttaionPlaceOrderArgs = {
 
 export type MuttaionSignUpArgs = {
   input?: InputMaybe<SignupInputType>
+}
+
+export type MuttaionVerifyUserArgs = {
+  email: Scalars['String']
+  otp: Scalars['Int']
+}
+
+export type OtpType = {
+  __typename?: 'OTPType'
+  createdAt?: Maybe<Scalars['DateTime']>
+  status?: Maybe<Scalars['Boolean']>
+  value?: Maybe<Scalars['Int']>
 }
 
 export type OrderPlacedInputType = {
@@ -143,10 +162,12 @@ export enum UserRoleEnum {
 
 export type UserType = {
   __typename?: 'UserType'
+  _id?: Maybe<Scalars['ID']>
   email?: Maybe<Scalars['String']>
   firstName?: Maybe<Scalars['String']>
   lastName?: Maybe<Scalars['String']>
   mobile?: Maybe<Scalars['String']>
+  otp?: Maybe<OtpType>
   role?: Maybe<UserRoleEnum>
 }
 
@@ -262,6 +283,7 @@ export type DirectiveResolverFn<
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  DateTime: ResolverTypeWrapper<Scalars['DateTime']>
   ErrorType: ResolverTypeWrapper<ErrorType>
   String: ResolverTypeWrapper<Scalars['String']>
   FoodCategoryPayload: ResolverTypeWrapper<FoodCategoryPayload>
@@ -271,8 +293,10 @@ export type ResolversTypes = {
   FoodItemType: ResolverTypeWrapper<FoodItemType>
   FoodMenuType: ResolverTypeWrapper<FoodMenuType>
   Muttaion: ResolverTypeWrapper<{}>
-  OrderPlacedInputType: OrderPlacedInputType
   Int: ResolverTypeWrapper<Scalars['Int']>
+  OTPType: ResolverTypeWrapper<OtpType>
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>
+  OrderPlacedInputType: OrderPlacedInputType
   OrderPlacedType: ResolverTypeWrapper<OrderPlacedType>
   Query: ResolverTypeWrapper<{}>
   RoomInputType: RoomInputType
@@ -283,11 +307,11 @@ export type ResolversTypes = {
   UserRoleEnum: UserRoleEnum
   UserType: ResolverTypeWrapper<UserType>
   AdditionalEntityFields: AdditionalEntityFields
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>
 }
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  DateTime: Scalars['DateTime']
   ErrorType: ErrorType
   String: Scalars['String']
   FoodCategoryPayload: FoodCategoryPayload
@@ -297,8 +321,10 @@ export type ResolversParentTypes = {
   FoodItemType: FoodItemType
   FoodMenuType: FoodMenuType
   Muttaion: {}
-  OrderPlacedInputType: OrderPlacedInputType
   Int: Scalars['Int']
+  OTPType: OtpType
+  Boolean: Scalars['Boolean']
+  OrderPlacedInputType: OrderPlacedInputType
   OrderPlacedType: OrderPlacedType
   Query: {}
   RoomInputType: RoomInputType
@@ -308,7 +334,6 @@ export type ResolversParentTypes = {
   SignupPayloadType: SignupPayloadType
   UserType: UserType
   AdditionalEntityFields: AdditionalEntityFields
-  Boolean: Scalars['Boolean']
 }
 
 export type UnionDirectiveArgs = {
@@ -397,6 +422,11 @@ export type MapDirectiveResolver<
   ContextType = any,
   Args = MapDirectiveArgs,
 > = DirectiveResolverFn<Result, Parent, ContextType, Args>
+
+export interface DateTimeScalarConfig
+  extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
+  name: 'DateTime'
+}
 
 export type ErrorTypeResolvers<
   ContextType = any,
@@ -502,6 +532,26 @@ export type MuttaionResolvers<
     ContextType,
     Partial<MuttaionSignUpArgs>
   >
+  verifyUser?: Resolver<
+    Maybe<ResolversTypes['SignupPayloadType']>,
+    ParentType,
+    ContextType,
+    RequireFields<MuttaionVerifyUserArgs, 'email' | 'otp'>
+  >
+}
+
+export type OtpTypeResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['OTPType'] = ResolversParentTypes['OTPType'],
+> = {
+  createdAt?: Resolver<
+    Maybe<ResolversTypes['DateTime']>,
+    ParentType,
+    ContextType
+  >
+  status?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>
+  value?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }
 
 export type OrderPlacedTypeResolvers<
@@ -561,10 +611,12 @@ export type UserTypeResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['UserType'] = ResolversParentTypes['UserType'],
 > = {
+  _id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>
   email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   firstName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   lastName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   mobile?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  otp?: Resolver<Maybe<ResolversTypes['OTPType']>, ParentType, ContextType>
   role?: Resolver<
     Maybe<ResolversTypes['UserRoleEnum']>,
     ParentType,
@@ -574,6 +626,7 @@ export type UserTypeResolvers<
 }
 
 export type Resolvers<ContextType = any> = {
+  DateTime?: GraphQLScalarType
   ErrorType?: ErrorTypeResolvers<ContextType>
   FoodCategoryPayload?: FoodCategoryPayloadResolvers<ContextType>
   FoodCategoryType?: FoodCategoryTypeResolvers<ContextType>
@@ -581,6 +634,7 @@ export type Resolvers<ContextType = any> = {
   FoodItemType?: FoodItemTypeResolvers<ContextType>
   FoodMenuType?: FoodMenuTypeResolvers<ContextType>
   Muttaion?: MuttaionResolvers<ContextType>
+  OTPType?: OtpTypeResolvers<ContextType>
   OrderPlacedType?: OrderPlacedTypeResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
   RoomPayload?: RoomPayloadResolvers<ContextType>

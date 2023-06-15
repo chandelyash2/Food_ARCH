@@ -8,6 +8,9 @@ export const SignupPayloadType = new GraphQLObjectType({
     user: {
       type: UserType,
     },
+    token: {
+      type: GraphQLString,
+    },
     success: {
       type: GraphQLString,
     },

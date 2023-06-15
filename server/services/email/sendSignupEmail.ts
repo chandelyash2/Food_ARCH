@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer'
 import { signupTemplate } from '../templates/signupTemplate'
 import { isEmailSend } from '../errors'
-const sendSignupEmail = async (email: string, otp: string) => {
+const sendSignupEmail = async (email: string, otp: number) => {
   try {
     //step1
     const transporter = nodemailer.createTransport({

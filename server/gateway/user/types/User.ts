@@ -1,4 +1,12 @@
-import { GraphQLEnumType, GraphQLObjectType, GraphQLString } from 'graphql'
+import {
+  GraphQLBoolean,
+  GraphQLEnumType,
+  GraphQLID,
+  GraphQLInt,
+  GraphQLObjectType,
+  GraphQLString,
+} from 'graphql'
+import { GraphQLDateTime } from 'graphql-scalars'
 
 export const UserRoleEnum = new GraphQLEnumType({
   name: 'UserRoleEnum',
@@ -11,9 +19,26 @@ export const UserRoleEnum = new GraphQLEnumType({
     },
   },
 })
+export const otpType = new GraphQLObjectType({
+  name: 'OTPType',
+  fields: () => ({
+    value: {
+      type: GraphQLInt,
+    },
+    status: {
+      type: GraphQLBoolean,
+    },
+    createdAt: {
+      type: GraphQLDateTime,
+    },
+  }),
+})
 export const UserType = new GraphQLObjectType({
   name: 'UserType',
   fields: () => ({
+    _id: {
+      type: GraphQLID,
+    },
     firstName: {
       type: GraphQLString,
     },
@@ -28,6 +53,9 @@ export const UserType = new GraphQLObjectType({
     },
     role: {
       type: UserRoleEnum,
+    },
+    otp: {
+      type: otpType,
     },
   }),
 })
